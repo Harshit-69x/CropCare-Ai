@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CropCare AI - Smart Agriculture Expert System & Crop Advisory</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            200: '#a7f3d0',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Custom Application CSS -->
+    <link rel="stylesheet" href="/static/css/style.css?v={{ app_version }}">
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans antialiased">
+
+    <!-- =========================================================================
+         TOP NAVIGATION BAR
+    ========================================================================== -->
+    <header class="sticky top-0 z-40 glass-header border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo & Brand -->
+                <div class="flex items-center space-x-3 cursor-pointer" data-navigate-tab="dashboard">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-green-500 text-white flex items-center justify-center text-xl shadow-md shadow-emerald-500/20">
+                        🌱
+                    </div>
+                    <div>
+                        <span class="text-xl font-bold bg-gradient-to-r from-emerald-700 to-green-600 bg-clip-text text-transparent" data-i18n="app_title">CropCare AI</span>
+                        <span class="hidden sm:inline-block ml-2 px-2 py-0.5 text-xs font-semibold bg-emerald-100 text-emerald-800 rounded-full border border-emerald-200">Production AI</span>
+                    </div>
+                </div>
+
+                <!-- Navigation Tabs -->
+                <nav class="hidden lg:flex items-center space-x-1 tab-nav-container">
+                    <button class="nav-tab active px-3 py-2 rounded-xl text-sm font-medium transition" data-tab="dashboard">
+                        📊 <span data-i18n="nav_dashboard">Dashboard</span>
+                    </button>
+                    <button class="nav-tab px-3 py-2 rounded-xl text-sm font-medium transition" data-tab="diagnosis">
+                        🔍 <span data-i18n="nav_diagnosis">Disease Diagnosis</span>
+                    </button>
+                    <button class="nav-tab px-3 py-2 rounded-xl text-sm font-medium transition" data-tab="crop-rec">
+                        🌾 <span data-i18n="nav_crop_rec">Crop Recommender</span>
+                    </button>
+                    <button class="nav-tab px-3 py-2 rounded-xl text-sm font-medium transition" data-tab="soil">
+                        🧪 <span data-i18n="nav_soil">Soil Advisory</span>
+                    </button>
+                    <button class="nav-tab px-3 py-2 rounded-xl text-sm font-medium transition" data-tab="irrigation">
+                        💧 <span data-i18n="nav_irrigation">Irrigation Guide</span>
+                    </button>
+                    <button class="nav-tab px-3 py-2 rounded-xl text-sm font-medium transition" data-tab="chat">
+                        🤖 <span data-i18n="nav_chat">Kisan Mitra Bot</span>
+                    </button>
+                    <button class="nav-tab px-3 py-2 rounded-xl text-sm font-medium transition" data-tab="history">
+                        📜 <span data-i18n="nav_history">Records</span>
+                    </button>
+                </nav>
+
+                <!-- Actions: AI Settings & Language Switcher -->
+                <div class="flex items-center space-x-2">
+                    <button id="btnOpenApiModal" class="px-2.5 py-1.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold transition shadow-sm flex items-center space-x-1">
+                        <span>⚙️</span>
+                        <span data-i18n="btn_api_settings">AI Settings</span>
+                    </button>
+                    <button id="langToggleBtn" class="flex items-center space-x-1 px-3 py-1.5 rounded-xl border border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs sm:text-sm font-semibold transition shadow-sm">
+                        <span>🌐</span>
+                        <span data-i18n="lang_btn">हिंदी</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile Tab Bar (Scrollable) -->
+            <div class="flex lg:hidden overflow-x-auto py-2 space-x-2 border-t border-slate-100 no-scrollbar">
+                <button class="nav-tab active px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap" data-tab="dashboard">📊 Dashboard</button>
+                <button class="nav-tab px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap" data-tab="diagnosis">🔍 Diagnosis</button>
+                <button class="nav-tab px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap" data-tab="crop-rec">🌾 Crop Selection</button>
+                <button class="nav-tab px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap" data-tab="soil">🧪 Soil</button>
+                <button class="nav-tab px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap" data-tab="irrigation">💧 Irrigation</button>
+                <button class="nav-tab px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap" data-tab="chat">🤖 Kisan Bot</button>
+                <button class="nav-tab px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap" data-tab="history">📜 Records</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- =========================================================================
+         MAIN APPLICATION CONTENT
+    ========================================================================== -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- ---------------------------------------------------------------------
+             TAB 1: DASHBOARD / OVERVIEW
+        ---------------------------------------------------------------------- -->
+        <section id="tab-dashboard" class="tab-section space-y-6">
+            <!-- Hero Banner -->
+            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-900 via-emerald-800 to-green-900 text-white p-6 sm:p-10 shadow-xl shadow-emerald-900/10">
+                <div class="relative z-10 max-w-2xl">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-200 border border-emerald-400/30 mb-4" data-i18n="hero_badge">
+                        🌿 AI-Powered Vision & Agronomic Intelligence
+                    </span>
+                    <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight mb-3" data-i18n="hero_title">
+                        Intelligent Crop Health & Precision Farming Advisory
+                    </h1>
+                    <p class="text-sm sm:text-base text-emerald-100/90 leading-relaxed mb-6" data-i18n="hero_desc">
+                        Computer vision plant pathology, ML crop recommendation, precision soil fertilizer planning, irrigation scheduling, and bilingual farming guidance.
+                    </p>
+                    <div class="flex flex-wrap gap-3">
+                        <button class="px-5 py-2.5 rounded-xl bg-white text-emerald-800 hover:bg-emerald-50 font-bold text-sm shadow-md transition" data-navigate-tab="diagnosis">
+                            🔍 <span data-i18n="btn_start_diag">Diagnose Leaf Disease</span>
+                        </button>
+                        <button class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-md transition" data-navigate-tab="crop-rec">
+                            🌾 <span data-i18n="btn_recommend_crop">Recommend Optimal Crop</span>
+                        </button>
+                        <button class="px-5 py-2.5 rounded-xl bg-emerald-700/60 hover:bg-emerald-700 text-white border border-emerald-400/30 font-semibold text-sm transition" data-navigate-tab="soil">
+                            🧪 <span data-i18n="btn_soil_plan">Plan Soil Fertilizer</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="absolute -right-10 -bottom-10 opacity-10 text-[200px] select-none pointer-events-none">
+                    🌾
+                </div>
+            </div>
+
+            <!-- Stats Overview Cards -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm card-hover">
+                    <div class="flex items-center justify-between text-slate-500 mb-2">
+                        <span class="text-xs font-semibold uppercase tracking-wider" data-i18n="stat_diagnoses">Diagnoses Generated</span>
+                        <span class="text-emerald-600 text-lg">🔍</span>
+                    </div>
+                    <div id="statDiagCount" class="text-2xl sm:text-3xl font-extrabold text-slate-800">0</div>
+                    <div class="text-xs text-slate-400 mt-1">Saved in SQLite database</div>
+                </div>
+                <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm card-hover">
+                    <div class="flex items-center justify-between text-slate-500 mb-2">
+                        <span class="text-xs font-semibold uppercase tracking-wider" data-i18n="stat_recommendations">Crops Recommended</span>
+                        <span class="text-emerald-600 text-lg">🌾</span>
+                    </div>
+                    <div id="statRecCount" class="text-2xl sm:text-3xl font-extrabold text-slate-800">0</div>
+                    <div class="text-xs text-emerald-600 mt-1">Machine Learning Model</div>
+                </div>
+                <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm card-hover">
+                    <div class="flex items-center justify-between text-slate-500 mb-2">
+                        <span class="text-xs font-semibold uppercase tracking-wider" data-i18n="stat_confidence">Avg Certainty</span>
+                        <span class="text-emerald-600 text-lg">📈</span>
+                    </div>
+                    <div id="statConfAvg" class="text-2xl sm:text-3xl font-extrabold text-slate-800">0%</div>
+                    <div class="text-xs text-emerald-600 mt-1">Computer vision & rules</div>
+                </div>
+                <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm card-hover">
+                    <div class="flex items-center justify-between text-slate-500 mb-2">
+                        <span class="text-xs font-semibold uppercase tracking-wider" data-i18n="stat_soil_records">Soil Tests Evaluated</span>
+                        <span class="text-emerald-600 text-lg">🧪</span>
+                    </div>
+                    <div id="statSoilCount" class="text-2xl sm:text-3xl font-extrabold text-slate-800">0</div>
+                    <div class="text-xs text-slate-400 mt-1">NPK & pH advisory plans</div>
+                </div>
+            </div>
+
+            <!-- Quick Action Feature Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Feature 1: Vision Disease Diagnosis -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm card-hover flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-2xl mb-4">
+                            📸
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-2" data-i18n="nav_diagnosis">Disease Diagnosis</h3>
+                        <p class="text-sm text-slate-500 mb-4">
+                            Upload a leaf photo for real AI computer vision classification, or select observable symptoms for transparent expert rule inference.
+                        </p>
+                    </div>
+                    <button class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm transition" data-navigate-tab="diagnosis">
+                        <span data-i18n="btn_start_diag">Diagnose Leaf Disease</span> →
+                    </button>
+                </div>
+
+                <!-- Feature 2: Crop Recommendation -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm card-hover flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-green-100 text-green-700 flex items-center justify-center text-2xl mb-4">
+                            🌾
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-2" data-i18n="nav_crop_rec">Crop Recommender</h3>
+                        <p class="text-sm text-slate-500 mb-4">
+                            Predict the most profitable and climate-suited crop using machine learning based on soil NPK, pH, temperature, and rainfall.
+                        </p>
+                    </div>
+                    <button class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm transition" data-navigate-tab="crop-rec">
+                        <span data-i18n="btn_recommend_crop">Recommend Optimal Crop</span> →
+                    </button>
+                </div>
+
+                <!-- Feature 3: Kisan Mitra Bot -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm card-hover flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-2xl mb-4">
+                            🤖
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-2" data-i18n="nav_chat">Kisan Mitra Bot</h3>
+                        <p class="text-sm text-slate-500 mb-4">
+                            Ask farming questions in English or Hindi: organic sprays, fertilizer schedules, disease prevention, and government schemes.
+                        </p>
+                    </div>
+                    <button class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm transition" data-navigate-tab="chat">
+                        <span>Chat with Assistant</span> →
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ---------------------------------------------------------------------
+             TAB 2: CROP DISEASE DIAGNOSIS
+        ---------------------------------------------------------------------- -->
+        <section id="tab-diagnosis" class="tab-section hidden space-y-6">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-extrabold text-slate-800" data-i18n="diag_title">Crop Disease Diagnosis Engine</h2>
+                    <p class="text-sm text-slate-500 mt-1" data-i18n="diag_desc">
+                        Upload a diseased plant leaf photograph for AI computer vision inspection, or pick observed symptoms for expert rule evaluation.
+                    </p>
+                </div>
+
+                <!-- Step 4 Highlighted: Leaf Image Upload (Vision Ready) -->
+                <div class="mb-6 p-5 rounded-2xl bg-emerald-50/60 border border-emerald-200">
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-xs font-bold text-emerald-900 uppercase tracking-wider" data-i18n="step4_image">Leaf Photo Upload (AI Vision)</label>
+                        <span class="text-xs font-semibold text-emerald-700 bg-white px-2.5 py-0.5 rounded-full border border-emerald-200" data-i18n="upload_badge">
+                            Computer Vision & Gemini Vision Ready
+                        </span>
+                    </div>
+
+                    <!-- Dropzone -->
+                    <div id="leafDropzone" class="dropzone p-6 rounded-2xl text-center cursor-pointer bg-white border-2 border-dashed border-emerald-300 hover:border-emerald-500 transition">
+                        <input type="file" id="leafFileInput" accept="image/png, image/jpeg, image/webp" class="hidden">
+                        <div class="text-4xl mb-2">📸</div>
+                        <p class="text-sm font-bold text-slate-800" data-i18n="drag_drop_text">Drag & drop leaf photo here, or click to browse</p>
+                        <p class="text-xs text-slate-500 mt-1" data-i18n="drop_formats">PNG, JPG, WEBP up to 16MB</p>
+                    </div>
+
+                    <!-- Preview Container -->
+                    <div id="imagePreviewContainer" class="hidden mt-3 p-4 bg-white border border-slate-200 rounded-2xl flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <img id="imagePreviewImg" class="w-16 h-16 object-cover rounded-xl border border-slate-300" src="" alt="Leaf preview">
+                            <div>
+                                <span class="text-xs font-semibold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">Leaf Photo Attached</span>
+                                <p class="text-xs text-slate-500 mt-1">Ready for Computer Vision segmentation & diagnosis</p>
+                            </div>
+                        </div>
+                        <button id="btnRemoveImage" class="text-xs text-rose-600 hover:text-rose-800 font-semibold px-3 py-1.5 rounded-lg border border-rose-200 hover:bg-rose-50 transition">
+                            Remove
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 1 & 2: Crop and Environment -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <!-- Crop Selection -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="label_crop">Target Crop (Optional if uploading photo)</label>
+                        <select id="cropSelect" class="w-full p-3 rounded-xl border border-slate-300 bg-white font-medium text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+
+                    <!-- Growth Stage -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="label_growth_stage">Growth Stage</label>
+                        <select id="growthStageSelect" class="w-full p-3 rounded-xl border border-slate-300 bg-white font-medium text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            <option value="seedling" data-i18n="stage_seedling">Seedling (0-20 days)</option>
+                            <option value="vegetative" selected data-i18n="stage_vegetative">Vegetative Growth</option>
+                            <option value="flowering" data-i18n="stage_flowering">Flowering & Fruit Setting</option>
+                            <option value="maturity" data-i18n="stage_maturity">Maturity / Grain Filling</option>
+                        </select>
+                    </div>
+
+                    <!-- Weather Conditions -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="label_weather">Field Weather Conditions</label>
+                        <select id="weatherSelect" class="w-full p-3 rounded-xl border border-slate-300 bg-white font-medium text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            <option value="normal" data-i18n="weather_normal">Normal / Moderate</option>
+                            <option value="warm_humid" data-i18n="weather_warm_humid">Warm & Humid (High Fungal Risk)</option>
+                            <option value="cool_wet" data-i18n="weather_cool_wet">Cool & Wet / Foggy</option>
+                            <option value="dry_hot" data-i18n="weather_dry_hot">Dry & Hot (Pest / Whitefly Risk)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Step 3: Plant Symptoms Selector -->
+                <div class="mb-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+                        <div class="flex items-center space-x-2">
+                            <label class="text-xs font-bold text-slate-700 uppercase tracking-wider" data-i18n="step3_symptoms">Observable Plant Symptoms</label>
+                            <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                <span id="selectedCountBadge">0</span> Selected
+                            </span>
+                        </div>
+
+                        <!-- Plant Part Filters -->
+                        <div class="flex items-center space-x-1.5 overflow-x-auto pb-1 sm:pb-0">
+                            <button class="symptom-part-filter px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-600 text-white" data-part="all" data-i18n="filter_all_parts">All</button>
+                            <button class="symptom-part-filter px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200" data-part="leaf" data-i18n="filter_leaf">Leaf</button>
+                            <button class="symptom-part-filter px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200" data-part="stem" data-i18n="filter_stem">Stem</button>
+                            <button class="symptom-part-filter px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200" data-part="fruit" data-i18n="filter_fruit">Fruit/Grain</button>
+                            <button class="symptom-part-filter px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200" data-part="whole_plant" data-i18n="filter_whole">Whole Plant</button>
+                        </div>
+                    </div>
+
+                    <!-- Search Filter -->
+                    <div class="mb-3">
+                        <input type="text" id="symptomSearchInput" placeholder="Type to filter symptoms (e.g. yellow, spot, rings)..." class="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+
+                    <!-- Symptom Chips Grid -->
+                    <div id="symptomContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 max-h-64 overflow-y-auto p-1 border border-slate-100 rounded-2xl bg-slate-50/50">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex flex-wrap items-center gap-3 pt-4 border-t border-slate-100">
+                    <button id="btnRunDiagnosis" class="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-lg shadow-emerald-600/20 transition flex items-center">
+                        <span class="mr-2">⚡</span> <span data-i18n="btn_run_diag">Run AI Vision & Diagnosis</span>
+                    </button>
+                    <button id="btnResetDiagnosis" class="px-4 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold text-sm transition" data-i18n="btn_reset_diag">
+                        Reset Form
+                    </button>
+                </div>
+            </div>
+
+            <!-- Diagnosis Empty Placeholder -->
+            <div id="diagnosisEmptyCard" class="bg-white rounded-3xl p-10 border border-slate-200 text-center">
+                <div class="text-5xl mb-3">🌿</div>
+                <h3 class="text-lg font-bold text-slate-700">No Diagnosis Generated Yet</h3>
+                <p class="text-sm text-slate-400 max-w-md mx-auto mt-1">
+                    Upload a leaf photograph or select observable symptoms above, then click <strong>Run AI Vision & Diagnosis</strong>.
+                </p>
+            </div>
+
+            <!-- Diagnosis Result Card (Shown after execution) -->
+            <div id="diagnosisResultCard" class="hidden bg-white rounded-3xl p-6 sm:p-8 border border-emerald-200 shadow-lg space-y-6">
+                <!-- Header & Confidence Bar -->
+                <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b border-slate-100 pb-5">
+                    <div>
+                        <div class="flex flex-wrap items-center gap-2 mb-2">
+                            <span id="resSeverityBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-200">High Severity</span>
+                            <span id="resPathogenBadge" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">Fungal</span>
+                            <span id="resEngineBadge" class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">Local Vision AI</span>
+                        </div>
+                        <h2 id="resDiseaseTitle" class="text-2xl sm:text-3xl font-extrabold text-slate-900">Early Blight</h2>
+                        <h4 id="resSubTitle" class="text-sm text-slate-500 font-medium mt-0.5">अगेती झुलसा</h4>
+                    </div>
+
+                    <!-- Certainty Progress Meter -->
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 min-w-[200px]">
+                        <div class="flex items-center justify-between text-xs font-semibold text-slate-600 mb-1.5">
+                            <span data-i18n="badge_confidence">Confidence Score</span>
+                            <span id="resConfidencePercent" class="text-base font-extrabold text-emerald-700">92%</span>
+                        </div>
+                        <div class="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
+                            <div id="resConfidenceBar" class="h-full bg-emerald-500 rounded-full transition-all duration-700" style="width: 92%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Leaf Visual Analysis Card (If Image Uploaded) -->
+                <div id="resImageAnalysisCard" class="hidden bg-slate-50 border border-slate-200 rounded-2xl p-4">
+                    <div class="flex flex-col sm:flex-row items-center gap-4">
+                        <img id="resUploadedLeafThumb" class="w-20 h-20 rounded-xl object-cover border border-slate-300 shadow-sm flex-shrink-0" src="" alt="Leaf">
+                        <div class="flex-grow w-full">
+                            <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Computer Vision Pathology Segmentation</h4>
+                            <div class="grid grid-cols-3 gap-2 text-xs mb-2">
+                                <div class="bg-green-100/70 p-2 rounded-lg text-center">
+                                    <span class="block text-slate-500 text-[10px]">Healthy Foliage</span>
+                                    <span id="imgHealthyPct" class="font-bold text-green-900 text-sm">65%</span>
+                                </div>
+                                <div class="bg-amber-100/70 p-2 rounded-lg text-center">
+                                    <span class="block text-slate-500 text-[10px]">Chlorosis (Yellowing)</span>
+                                    <span id="imgChlorosisPct" class="font-bold text-amber-900 text-sm">20%</span>
+                                </div>
+                                <div class="bg-rose-100/70 p-2 rounded-lg text-center">
+                                    <span class="block text-slate-500 text-[10px]">Necrosis (Lesions)</span>
+                                    <span id="imgNecrosisPct" class="font-bold text-rose-900 text-sm">15%</span>
+                                </div>
+                            </div>
+                            <p id="imgAssessmentText" class="text-xs text-slate-600 italic"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MULTI-MODAL EVIDENCE BREAKDOWN (Vision AI vs Expert Rules vs Fusion) -->
+                <div id="multiModalEvidenceCard" class="hidden bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xl">🔬</span>
+                            <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider" data-i18n="multi_modal_title">Multi-Modal Diagnostic Evidence Breakdown</h3>
+                        </div>
+                        <span id="fusionStatusBadge" class="self-start sm:self-auto px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                            Mutual Corroboration
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Left: Independent Computer Vision Prediction -->
+                        <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-xs font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100" data-i18n="indep_vision_title">
+                                        📷 Independent Vision AI
+                                    </span>
+                                    <span id="visionConfBadge" class="text-xs font-bold text-indigo-800 bg-indigo-100/60 px-2 py-0.5 rounded-full">--</span>
+                                </div>
+                                <h4 id="visionDiseaseTitle" class="text-base font-bold text-slate-900 mb-1">--</h4>
+                                <p id="visionMorphologySummary" class="text-xs text-slate-500 mb-3">--</p>
+                            </div>
+                            <div class="border-t border-slate-100 pt-2 text-[11px] text-slate-500 flex justify-between">
+                                <span>Engine: <span id="visionEngineName" class="font-medium text-slate-700">CropCare Botanical CV</span></span>
+                                <span>Clusters: <span id="visionSpotCount" class="font-medium text-slate-700">--</span></span>
+                            </div>
+                        </div>
+
+                        <!-- Right: Independent Symptom Expert Rules Prediction -->
+                        <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100" data-i18n="indep_rules_title">
+                                        📑 Independent Expert Rules
+                                    </span>
+                                    <span id="ruleConfBadge" class="text-xs font-bold text-emerald-800 bg-emerald-100/60 px-2 py-0.5 rounded-full">--</span>
+                                </div>
+                                <h4 id="ruleDiseaseTitle" class="text-base font-bold text-slate-900 mb-1">--</h4>
+                                <p id="ruleMatchedSummary" class="text-xs text-slate-500 mb-3">--</p>
+                            </div>
+                            <div class="border-t border-slate-100 pt-2 text-[11px] text-slate-500 flex justify-between">
+                                <span>Rule: <span id="ruleFiredId" class="font-medium text-slate-700">--</span></span>
+                                <span>Pathognomonic: <span id="rulePathoCheck" class="font-semibold text-emerald-600">Evaluated</span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bottom: Reconciliation & Fusion Synthesis -->
+                    <div id="fusionReasoningBox" class="bg-blue-50/70 border border-blue-200 rounded-xl p-3.5 text-xs text-blue-900">
+                        <div class="font-bold flex items-center gap-1.5 mb-1 text-blue-950">
+                            <span>⚖️</span> <span data-i18n="fusion_reconciliation_title">Multi-Modal Evidence Reconciliation</span>
+                        </div>
+                        <p id="fusionReasoningText" class="leading-relaxed"></p>
+                    </div>
+                </div>
+
+                <!-- DUAL CANDIDATE CARD (Shown during Diagnostic Tension / Uncertain state) -->
+                <div id="dualCandidateCard" class="hidden bg-amber-50/70 border-2 border-amber-300 rounded-2xl p-5 space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-amber-200 pb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-2xl">⚖️</span>
+                            <div>
+                                <h3 class="text-sm font-bold text-amber-950 uppercase tracking-wider" data-i18n="dual_candidate_title">
+                                    Diagnostic Tension: Competing Disease Candidates
+                                </h3>
+                                <p class="text-xs text-amber-800">
+                                    Modality divergence: Computer Vision and Farmer Observations point to different pathogens.
+                                </p>
+                            </div>
+                        </div>
+                        <span class="self-start sm:self-auto px-2.5 py-1 rounded-full text-xs font-bold bg-amber-200 text-amber-900 border border-amber-300">
+                            Uncertain / Conflict State
+                        </span>
+                    </div>
+
+                    <!-- Dual Candidates Comparison Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Candidate 1 -->
+                        <div class="bg-white rounded-xl p-4 border border-amber-200 shadow-sm flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-xs font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">
+                                        Candidate 1 (Optical AI)
+                                    </span>
+                                    <span id="cand1ConfBadge" class="text-xs font-extrabold text-indigo-900 bg-indigo-100 px-2.5 py-0.5 rounded-full">--</span>
+                                </div>
+                                <h4 id="cand1Title" class="text-lg font-bold text-slate-900 mb-1">Early Blight</h4>
+                                <p id="cand1Evidence" class="text-xs text-slate-600 mb-3 leading-relaxed">--</p>
+                            </div>
+                            <div class="border-t border-slate-100 pt-2 text-[11px] text-slate-500">
+                                <span class="font-semibold text-slate-700">Modality:</span> <span id="cand1Modality">Computer Vision (Leaf Photo)</span>
+                            </div>
+                        </div>
+
+                        <!-- Candidate 2 -->
+                        <div class="bg-white rounded-xl p-4 border border-amber-200 shadow-sm flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                                        Candidate 2 (Farmer Symptoms)
+                                    </span>
+                                    <span id="cand2ConfBadge" class="text-xs font-extrabold text-emerald-900 bg-emerald-100 px-2.5 py-0.5 rounded-full">--</span>
+                                </div>
+                                <h4 id="cand2Title" class="text-lg font-bold text-slate-900 mb-1">Late Blight</h4>
+                                <p id="cand2Evidence" class="text-xs text-slate-600 mb-3 leading-relaxed">--</p>
+                            </div>
+                            <div class="border-t border-slate-100 pt-2 text-[11px] text-slate-500">
+                                <span class="font-semibold text-slate-700">Modality:</span> <span id="cand2Modality">Production Rules (Field Symptoms)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Discriminating Field Inspection Test Box -->
+                    <div id="fieldTestBox" class="bg-white border border-amber-300 rounded-xl p-4 text-xs text-slate-700">
+                        <div class="font-bold flex items-center gap-2 mb-1.5 text-amber-950 text-sm">
+                            <span>🔍</span> <span data-i18n="field_test_title">Recommended Field Discriminating Inspection Test</span>
+                        </div>
+                        <p id="fieldTestText" class="leading-relaxed text-slate-700"></p>
+                    </div>
+                </div>
+
+                <!-- EXPLANATION FACILITY (Why & How) -->
+                <div class="bg-gradient-to-r from-emerald-50 to-green-50 border border-emerald-200 rounded-2xl p-5 space-y-3">
+                    <div class="flex items-center space-x-2 text-emerald-900 font-bold text-sm sm:text-base">
+                        <span>🧠</span>
+                        <span data-i18n="section_explanation">Expert System Explanation Facility</span>
+                    </div>
+
+                    <!-- Why Fired -->
+                    <div>
+                        <h4 class="text-xs font-bold text-emerald-800 uppercase tracking-wider mb-1" data-i18n="why_fired_title">Why This Rule Fired (Reasoning Trace)</h4>
+                        <p id="resWhySelected" class="text-sm text-emerald-950 font-medium leading-relaxed"></p>
+                    </div>
+
+                    <!-- Step by step reasoning bullets -->
+                    <div>
+                        <ul id="resReasoningSteps" class="mt-2 space-y-1"></ul>
+                    </div>
+
+                    <!-- Source-Separated Symptoms Section -->
+                    <div class="space-y-3 pt-2 border-t border-emerald-200/60">
+                        <!-- User Selected Symptoms -->
+                        <div id="userSymptomsBox">
+                            <h4 class="text-xs font-bold text-emerald-900 uppercase tracking-wider mb-1.5 flex items-center gap-1.5" data-i18n="user_symptoms_header">
+                                <span>🧑‍🌾</span> <span>Farmer-Reported Field Observations</span>
+                            </h4>
+                            <div id="resUserSymptomsList" class="flex flex-wrap gap-1.5"></div>
+                        </div>
+
+                        <!-- Image Detected Symptoms -->
+                        <div id="imageSymptomsBox">
+                            <h4 class="text-xs font-bold text-emerald-900 uppercase tracking-wider mb-1.5 flex items-center gap-1.5" data-i18n="image_symptoms_header">
+                                <span>📸</span> <span>Computer Vision Extracted Foliar Lesions</span>
+                            </h4>
+                            <div id="resImageSymptomsList" class="flex flex-wrap gap-1.5"></div>
+                        </div>
+                    </div>
+
+                    <!-- Differential Diagnoses -->
+                    <div id="differentialContainer" class="pt-2 border-t border-emerald-200/60">
+                        <h4 class="text-xs font-bold text-emerald-800 uppercase tracking-wider mb-2" data-i18n="differential_title">Differential Diagnosis (Other Diseases Considered)</h4>
+                        <div id="resDifferentialList"></div>
+                    </div>
+                </div>
+
+                <!-- Comprehensive Treatment Container -->
+                <div id="treatmentContainer" class="space-y-4 pt-2">
+                    <h3 class="text-lg font-bold text-slate-800" data-i18n="treatment_title">Comprehensive Treatment & Advisory</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Organic Remedies -->
+                        <div class="bg-green-50/70 border border-green-200 rounded-2xl p-4">
+                            <div class="flex items-center space-x-2 text-green-800 font-bold text-sm mb-2">
+                                <span>🌿</span>
+                                <span data-i18n="organic_tab">Organic & Bio-Control</span>
+                            </div>
+                            <p id="resOrganicTreatment" class="text-xs sm:text-sm text-green-950 leading-relaxed"></p>
+                        </div>
+
+                        <!-- Chemical Treatment -->
+                        <div class="bg-blue-50/70 border border-blue-200 rounded-2xl p-4">
+                            <div class="flex items-center space-x-2 text-blue-800 font-bold text-sm mb-2">
+                                <span>🧪</span>
+                                <span data-i18n="chemical_tab">Chemical Fungicide / Pesticide</span>
+                            </div>
+                            <p id="resChemicalTreatment" class="text-xs sm:text-sm text-blue-950 leading-relaxed"></p>
+                        </div>
+                    </div>
+
+                    <!-- Dosage and Prevention -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-amber-50/70 border border-amber-200 rounded-2xl p-4">
+                            <div class="flex items-center space-x-2 text-amber-800 font-bold text-sm mb-1.5">
+                                <span>📏</span>
+                                <span data-i18n="dosage_label">Recommended Dosage</span>
+                            </div>
+                            <p id="resDosageSchedule" class="text-xs sm:text-sm text-amber-950 font-medium"></p>
+                        </div>
+
+                        <div class="bg-purple-50/70 border border-purple-200 rounded-2xl p-4">
+                            <div class="flex items-center space-x-2 text-purple-800 font-bold text-sm mb-1.5">
+                                <span>🛡️</span>
+                                <span data-i18n="preventive_tab">Preventive Practices</span>
+                            </div>
+                            <p id="resPreventiveMeasures" class="text-xs sm:text-sm text-purple-950"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Print Report Button -->
+                <div class="pt-4 border-t border-slate-100 flex justify-end">
+                    <button id="btnPrintDiagnosis" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-semibold text-xs sm:text-sm transition flex items-center space-x-2">
+                        <span>🖨️</span>
+                        <span data-i18n="btn_save_pdf">Print / Save Diagnosis</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ---------------------------------------------------------------------
+             TAB 3: CROP RECOMMENDER (NEW MODULE!)
+        ---------------------------------------------------------------------- -->
+        <section id="tab-crop-rec" class="tab-section hidden space-y-6">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-extrabold text-slate-800" data-i18n="rec_title">Machine Learning Crop Recommendation</h2>
+                    <p class="text-sm text-slate-500 mt-1" data-i18n="rec_desc">
+                        Enter your soil nutrient profile (N-P-K), soil pH, and climate conditions (Temperature, Humidity, Rainfall) to identify the most suitable and profitable crop.
+                    </p>
+                </div>
+
+                <!-- Quick Presets -->
+                <div class="mb-6 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                    <span class="text-xs font-bold text-slate-600 uppercase tracking-wider block mb-2" data-i18n="preset_label">Quick Sample Presets</span>
+                    <div class="flex flex-wrap gap-2">
+                        <button class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:border-emerald-500 text-xs font-semibold text-slate-700 transition" data-rec-preset="paddy" data-i18n="rec_preset_rice">Monsoon Paddy (High Rain)</button>
+                        <button class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:border-emerald-500 text-xs font-semibold text-slate-700 transition" data-rec-preset="wheat" data-i18n="rec_preset_wheat">Winter Wheat (Cool/Dry)</button>
+                        <button class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:border-emerald-500 text-xs font-semibold text-slate-700 transition" data-rec-preset="maize" data-i18n="rec_preset_maize">Summer Maize (Warm)</button>
+                        <button class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:border-emerald-500 text-xs font-semibold text-slate-700 transition" data-rec-preset="pulses" data-i18n="rec_preset_pulses">Arid Chickpea (Low N, High P/K)</button>
+                    </div>
+                </div>
+
+                <!-- Inputs Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="label_n">Nitrogen (N) kg/ha</label>
+                        <input type="number" id="recNInput" value="80" min="0" max="400" class="w-full p-3 rounded-xl border border-slate-300 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="label_p">Phosphorus (P) kg/ha</label>
+                        <input type="number" id="recPInput" value="45" min="0" max="300" class="w-full p-3 rounded-xl border border-slate-300 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="label_k">Potassium (K) kg/ha</label>
+                        <input type="number" id="recKInput" value="40" min="0" max="400" class="w-full p-3 rounded-xl border border-slate-300 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="label_ph">Soil pH</label>
+                        <input type="number" id="recPhInput" value="6.5" min="3.5" max="9.5" step="0.1" class="w-full p-3 rounded-xl border border-slate-300 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="label_temp">Temperature (°C)</label>
+                        <input type="number" id="recTempInput" value="24" min="5" max="50" step="0.5" class="w-full p-3 rounded-xl border border-slate-300 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="label_humidity">Relative Humidity (%)</label>
+                        <input type="number" id="recHumInput" value="75" min="10" max="100" class="w-full p-3 rounded-xl border border-slate-300 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="label_rainfall">Seasonal Rainfall (mm)</label>
+                        <input type="number" id="recRainInput" value="150" min="10" max="2500" class="w-full p-3 rounded-xl border border-slate-300 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button id="btnPredictCrop" class="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md transition flex items-center space-x-2">
+                    <span>🌾</span>
+                    <span data-i18n="btn_predict_crop">Predict Best Crop</span>
+                </button>
+            </div>
+
+            <!-- Crop Recommendation Results Card -->
+            <div id="cropRecResultCard" class="hidden bg-white rounded-3xl p-6 sm:p-8 border border-emerald-200 shadow-lg space-y-6">
+                <!-- Top Crop Hero -->
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-6 bg-gradient-to-br from-emerald-50 to-green-50 p-6 rounded-2xl border border-emerald-200">
+                    <div class="flex items-center space-x-5">
+                        <div id="resTopCropIcon" class="w-20 h-20 rounded-2xl bg-white shadow-md flex items-center justify-center text-5xl">
+                            🌾
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold text-emerald-800 uppercase tracking-wider block" data-i18n="rec_result_title">Top Recommended Crop</span>
+                            <h2 id="resTopCropName" class="text-3xl font-extrabold text-slate-900 mt-1">Rice / Paddy</h2>
+                            <p id="resTopCropDuration" class="text-xs text-slate-500 mt-0.5">110-140 days</p>
+                        </div>
+                    </div>
+                    <div class="text-center sm:text-right">
+                        <span class="text-xs text-slate-500 font-semibold block mb-1" data-i18n="rec_suitability">Suitability Score</span>
+                        <span id="resTopCropConfidence" class="text-3xl sm:text-4xl font-extrabold text-emerald-700">92.5%</span>
+                    </div>
+                </div>
+
+                <!-- Cultivation Tip & Statistical Explanation -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-white border border-slate-200 rounded-2xl p-5">
+                        <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 flex items-center space-x-1.5">
+                            <span>🌱</span>
+                            <span data-i18n="rec_cultivation_tip">Key Agronomic Tip</span>
+                        </h4>
+                        <p id="resTopCropTip" class="text-sm text-slate-700 leading-relaxed"></p>
+                    </div>
+
+                    <div class="bg-white border border-slate-200 rounded-2xl p-5">
+                        <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 flex items-center space-x-1.5">
+                            <span>📊</span>
+                            <span>Model Explanation</span>
+                        </h4>
+                        <p id="resCropExplanation" class="text-sm text-slate-600 leading-relaxed font-medium"></p>
+                    </div>
+                </div>
+
+                <!-- Alternatives -->
+                <div>
+                    <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider mb-3" data-i18n="rec_alternatives_title">Alternative Suitable Crops</h4>
+                    <div id="resCropAlternativesList" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ---------------------------------------------------------------------
+             TAB 4: SOIL ADVISORY
+        ---------------------------------------------------------------------- -->
+        <section id="tab-soil" class="tab-section hidden space-y-6">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-extrabold text-slate-800" data-i18n="soil_title">Soil Health & Precision Fertilizer Advisory</h2>
+                    <p class="text-sm text-slate-500 mt-1" data-i18n="soil_desc">
+                        Enter your soil test values (N-P-K & pH) to calculate exact commercial fertilizer bags (Urea, DAP, MOP) and organic amendments per acre.
+                    </p>
+                </div>
+
+                <!-- Quick Presets -->
+                <div class="mb-6 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                    <span class="text-xs font-bold text-slate-600 uppercase tracking-wider block mb-2" data-i18n="preset_label">Quick Sample Presets</span>
+                    <div class="flex flex-wrap gap-2">
+                        <button class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:border-emerald-500 text-xs font-semibold text-slate-700 transition" data-soil-preset="low_n" data-i18n="preset_low_n">Low Nitrogen Soil</button>
+                        <button class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:border-emerald-500 text-xs font-semibold text-slate-700 transition" data-soil-preset="acidic" data-i18n="preset_acidic">Acidic Soil (Low pH)</button>
+                        <button class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:border-emerald-500 text-xs font-semibold text-slate-700 transition" data-soil-preset="alkaline" data-i18n="preset_alkaline">Alkaline Soil (High pH)</button>
+                        <button class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:border-emerald-500 text-xs font-semibold text-slate-700 transition" data-soil-preset="balanced" data-i18n="preset_balanced">Balanced Fertile Soil</button>
+                    </div>
+                </div>
+
+                <!-- Inputs Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="label_crop">Target Crop</label>
+                        <select id="soilCropSelect" class="w-full p-3 rounded-xl border border-slate-300 bg-white font-medium text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="label_soil_type">Soil Texture</label>
+                        <select id="soilTypeSelect" class="w-full p-3 rounded-xl border border-slate-300 bg-white font-medium text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            <option value="sandy" data-i18n="soil_sandy">Sandy (Light, Drains Fast)</option>
+                            <option value="loamy" selected data-i18n="soil_loamy">Loamy (Ideal Balanced)</option>
+                            <option value="clayey" data-i18n="soil_clayey">Clayey (Heavy, Holds Water)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="label_n">Available Nitrogen (N) kg/ha</label>
+                        <input type="number" id="soilNInput" value="80" min="0" max="400" class="w-full p-3 rounded-xl border border-slate-300 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="label_p">Available Phosphorus (P) kg/ha</label>
+                        <input type="number" id="soilPInput" value="35" min="0" max="200" class="w-full p-3 rounded-xl border border-slate-300 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="label_k">Available Potassium (K) kg/ha</label>
+                        <input type="number" id="soilKInput" value="40" min="0" max="300" class="w-full p-3 rounded-xl border border-slate-300 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+
+                    <!-- Soil pH Slider -->
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label class="text-xs font-bold text-slate-700 uppercase tracking-wider" data-i18n="label_ph">Soil pH Level</label>
+                            <span id="soilPhDisplay" class="text-sm font-extrabold text-emerald-700">6.8</span>
+                        </div>
+                        <input type="range" id="soilPhInput" min="4.0" max="9.5" step="0.1" value="6.8" class="w-full accent-emerald-600 cursor-pointer">
+                        <!-- Visual Gauge Bar -->
+                        <div class="ph-gauge-bar mt-2">
+                            <div id="phIndicatorPin" class="ph-indicator-pin" style="left: 50%;"></div>
+                        </div>
+                        <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+                            <span>Acidic (4.0)</span>
+                            <span>Optimal (6.5-7.5)</span>
+                            <span>Alkaline (9.5)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Calculate Button -->
+                <button id="btnCalculateSoil" class="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md transition">
+                    🧪 <span data-i18n="btn_calculate_fertilizer">Calculate Fertilizer Plan</span>
+                </button>
+            </div>
+
+            <!-- Soil Result Card -->
+            <div id="soilResultCard" class="hidden bg-white rounded-3xl p-6 sm:p-8 border border-emerald-200 shadow-lg space-y-6">
+                <div>
+                    <h3 class="text-xl font-extrabold text-slate-800" data-i18n="plan_per_acre">Precision Fertilizer Plan Per Acre</h3>
+                    <p id="resSoilSummary" class="text-sm text-slate-600 mt-1 leading-relaxed font-medium"></p>
+                    <p id="resPhAdvice" class="text-xs sm:text-sm text-amber-800 font-semibold mt-2 bg-amber-50 p-3 rounded-xl border border-amber-200"></p>
+                </div>
+
+                <!-- 3 Fertilizer Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <!-- Urea -->
+                    <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-center">
+                        <span class="text-xs font-bold text-emerald-800 uppercase" data-i18n="urea_badge">Urea (46% N)</span>
+                        <div id="resUreaKg" class="text-3xl font-extrabold text-emerald-900 mt-2">35 kg</div>
+                        <div id="resUreaBags" class="text-xs text-emerald-700 mt-1">(~0.8 bags)</div>
+                    </div>
+
+                    <!-- DAP -->
+                    <div class="bg-blue-50 border border-blue-200 rounded-2xl p-4 text-center">
+                        <span class="text-xs font-bold text-blue-800 uppercase" data-i18n="dap_badge">DAP (18% N, 46% P2O5)</span>
+                        <div id="resDapKg" class="text-3xl font-extrabold text-blue-900 mt-2">25 kg</div>
+                        <div id="resDapBags" class="text-xs text-blue-700 mt-1">(~0.5 bags)</div>
+                    </div>
+
+                    <!-- MOP Potash -->
+                    <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-center">
+                        <span class="text-xs font-bold text-amber-800 uppercase" data-i18n="mop_badge">MOP / Potash (60% K2O)</span>
+                        <div id="resMopKg" class="text-3xl font-extrabold text-amber-900 mt-2">15 kg</div>
+                        <div id="resMopBags" class="text-xs text-amber-700 mt-1">(~0.3 bags)</div>
+                    </div>
+                </div>
+
+                <!-- Nutrient Status Row -->
+                <div class="grid grid-cols-3 gap-2 bg-slate-50 p-3 rounded-xl text-center text-xs">
+                    <div>
+                        <span class="text-slate-400 block">Nitrogen</span>
+                        <span id="resNLevel" class="font-bold text-slate-700">80 kg/ha</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 block">Phosphorus</span>
+                        <span id="resPLevel" class="font-bold text-slate-700">35 kg/ha</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 block">Potassium</span>
+                        <span id="resKLevel" class="font-bold text-slate-700">40 kg/ha</span>
+                    </div>
+                </div>
+
+                <!-- Organic Soil Enrichment -->
+                <div class="bg-green-50/60 border border-green-200 rounded-2xl p-5">
+                    <h4 class="text-sm font-bold text-green-900 mb-2" data-i18n="organic_advisory_title">Organic Soil Enrichment</h4>
+                    <ul id="resOrganicRemediesList" class="space-y-1.5"></ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ---------------------------------------------------------------------
+             TAB 5: IRRIGATION GUIDANCE
+        ---------------------------------------------------------------------- -->
+        <section id="tab-irrigation" class="tab-section hidden space-y-6">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-extrabold text-slate-800" data-i18n="irri_title">Crop Water & Irrigation Guidance</h2>
+                    <p class="text-sm text-slate-500 mt-1" data-i18n="irri_desc">
+                        Calculate watering frequency, critical growth moisture stages, and the best irrigation method to maximize yield and conserve water.
+                    </p>
+                </div>
+
+                <!-- Form -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="label_crop">Target Crop</label>
+                        <select id="irriCropSelect" class="w-full p-3 rounded-xl border border-slate-300 bg-white font-medium text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="label_growth_stage">Growth Stage</label>
+                        <select id="irriStageSelect" class="w-full p-3 rounded-xl border border-slate-300 bg-white font-medium text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            <option value="seedling" data-i18n="stage_seedling">Seedling / Establishment</option>
+                            <option value="vegetative" selected data-i18n="stage_vegetative">Vegetative Growth</option>
+                            <option value="flowering" data-i18n="stage_flowering">Flowering & Fruit Set</option>
+                            <option value="maturity" data-i18n="stage_maturity">Maturity / Grain Filling</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="label_soil_type">Soil Texture</label>
+                        <select id="irriSoilSelect" class="w-full p-3 rounded-xl border border-slate-300 bg-white font-medium text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            <option value="sandy" data-i18n="soil_sandy">Sandy (Drains Fast)</option>
+                            <option value="loamy" selected data-i18n="soil_loamy">Loamy (Balanced)</option>
+                            <option value="clayey" data-i18n="soil_clayey">Clayey (Holds Moisture)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="label_season">Season / Climate</label>
+                        <select id="irriSeasonSelect" class="w-full p-3 rounded-xl border border-slate-300 bg-white font-medium text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            <option value="winter" selected data-i18n="season_winter">Winter (Rabi)</option>
+                            <option value="summer" data-i18n="season_summer">Summer (Zaid)</option>
+                            <option value="monsoon" data-i18n="season_monsoon">Monsoon (Kharif)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button id="btnGetIrrigation" class="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md transition">
+                    💧 <span data-i18n="btn_get_irrigation">Get Irrigation Schedule</span>
+                </button>
+            </div>
+
+            <!-- Irrigation Results Card -->
+            <div id="irriResultCard" class="hidden bg-white rounded-3xl p-6 sm:p-8 border border-blue-200 shadow-lg space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-blue-50 border border-blue-200 rounded-2xl p-5">
+                        <span class="text-xs font-bold text-blue-700 uppercase" data-i18n="watering_interval_title">Recommended Watering Interval</span>
+                        <div id="resIrriInterval" class="text-2xl sm:text-3xl font-extrabold text-blue-900 mt-2">Every 7 Days</div>
+                    </div>
+                    <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-5">
+                        <span class="text-xs font-bold text-emerald-700 uppercase" data-i18n="best_method_title">Optimal Irrigation Method</span>
+                        <div id="resIrriMethod" class="text-base sm:text-lg font-bold text-emerald-900 mt-2">Drip Irrigation</div>
+                    </div>
+                </div>
+
+                <!-- Critical Stages -->
+                <div>
+                    <h3 class="text-base font-bold text-slate-800 mb-3" data-i18n="critical_stages_title">Critical Crop Moisture Stages</h3>
+                    <div id="resCriticalStagesList" class="space-y-2"></div>
+                </div>
+
+                <!-- Actionable tips -->
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+                    <h4 class="text-xs font-bold text-slate-700 uppercase mb-2">Water Conservation Tips</h4>
+                    <ul id="resWaterTipsList" class="space-y-1.5"></ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ---------------------------------------------------------------------
+             TAB 6: KISAN MITRA AGRI-BOT
+        ---------------------------------------------------------------------- -->
+        <section id="tab-chat" class="tab-section hidden space-y-6">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm flex flex-col h-[650px]">
+                <div class="border-b border-slate-100 pb-4 mb-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-xl shadow-md">
+                            🤖
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-extrabold text-slate-800" data-i18n="chat_title">Kisan Mitra - AI Agricultural Assistant</h2>
+                            <p class="text-xs text-slate-500" data-i18n="chat_subtitle">Instant answers for crop diseases, organic remedies, fertilizer rates, and farming tips.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Message Stream -->
+                <div id="chatMessagesList" class="flex-grow overflow-y-auto pr-2 space-y-3">
+                    <!-- Initial Welcome Message -->
+                    <div class="flex items-start">
+                        <div class="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center text-sm mr-2.5 flex-shrink-0 shadow-sm">🤖</div>
+                        <div class="chat-bubble-bot p-3.5 rounded-2xl text-sm max-w-[85%] sm:max-w-[75%] shadow-sm leading-relaxed">
+                            👨‍🌾 <strong>Namaste! I am your CropCare AI Kisan Assistant.</strong><br/>
+                            You can ask me questions about crop diseases, organic sprays, fertilizer dosages, irrigation, crop selection, or soil health. How may I help you today?
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Prompt Chips -->
+                <div class="py-2 overflow-x-auto flex space-x-2 border-t border-slate-100 no-scrollbar">
+                    <button class="chat-chip px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-xs text-emerald-800 font-medium whitespace-nowrap" data-prompt="How to make organic neem spray?" data-i18n="chip_neem">
+                        🌿 Organic Neem Spray
+                    </button>
+                    <button class="chat-chip px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-xs text-emerald-800 font-medium whitespace-nowrap" data-prompt="When and how much urea to apply?" data-i18n="chip_urea">
+                        🧪 Urea Dosage Schedule
+                    </button>
+                    <button class="chat-chip px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-xs text-emerald-800 font-medium whitespace-nowrap" data-prompt="Why are crop leaves turning yellow?" data-i18n="chip_yellow">
+                        🍂 Yellow Leaves Remedy
+                    </button>
+                    <button class="chat-chip px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-xs text-emerald-800 font-medium whitespace-nowrap" data-prompt="How to do soil testing properly?" data-i18n="chip_soil">
+                        🌱 Soil Testing Guide
+                    </button>
+                </div>
+
+                <!-- Input Row -->
+                <div class="pt-3 border-t border-slate-100 flex items-center space-x-2">
+                    <input type="text" id="chatInput" placeholder="Ask a question (e.g., How to prepare organic neem spray?)..." class="flex-grow p-3 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" data-i18n="chat_placeholder">
+                    <button id="btnSendChat" class="px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md transition flex items-center space-x-1">
+                        <span data-i18n="chat_send">Send</span>
+                        <span>🚀</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ---------------------------------------------------------------------
+             TAB 7: RECORDS & HISTORY
+        ---------------------------------------------------------------------- -->
+        <section id="tab-history" class="tab-section hidden space-y-6">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+                    <div>
+                        <h2 class="text-2xl font-extrabold text-slate-800" data-i18n="hist_title">Saved Advisories & History</h2>
+                        <p class="text-sm text-slate-500 mt-1" data-i18n="hist_desc">Review past disease diagnoses, crop recommendations, and soil test records stored in SQLite database.</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button id="btnSeedSampleData" class="px-3 py-2 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-emerald-800 text-xs font-semibold transition" data-i18n="btn_seed_sample">
+                            Load Sample Data
+                        </button>
+                        <button id="btnRefreshHistory" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition" data-i18n="btn_clear_history">
+                            Refresh Records
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Disease Diagnosis Records Table -->
+                <div>
+                    <h3 class="text-base font-bold text-slate-800 mb-3 flex items-center space-x-2">
+                        <span>🔍</span>
+                        <span>Disease Diagnosis Records</span>
+                    </h3>
+                    <div class="overflow-x-auto border border-slate-200 rounded-2xl">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-50 text-slate-500 text-xs uppercase border-b border-slate-200">
+                                <tr>
+                                    <th class="py-3 px-4" data-i18n="col_date">Date & Time</th>
+                                    <th class="py-3 px-4" data-i18n="col_crop">Crop</th>
+                                    <th class="py-3 px-4" data-i18n="col_disease">Diagnosis</th>
+                                    <th class="py-3 px-4" data-i18n="col_confidence">Certainty</th>
+                                    <th class="py-3 px-4 text-right" data-i18n="col_action">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="diagHistoryTableBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Crop Recommendations Table -->
+                <div>
+                    <h3 class="text-base font-bold text-slate-800 mb-3 flex items-center space-x-2">
+                        <span>🌾</span>
+                        <span>Crop Recommendation Records (ML)</span>
+                    </h3>
+                    <div class="overflow-x-auto border border-slate-200 rounded-2xl">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-50 text-slate-500 text-xs uppercase border-b border-slate-200">
+                                <tr>
+                                    <th class="py-3 px-4" data-i18n="col_date">Date & Time</th>
+                                    <th class="py-3 px-4">Recommended Crop</th>
+                                    <th class="py-3 px-4">NPK (kg/ha)</th>
+                                    <th class="py-3 px-4">Climate / pH</th>
+                                    <th class="py-3 px-4" data-i18n="col_confidence">Score</th>
+                                    <th class="py-3 px-4 text-right" data-i18n="col_action">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cropRecHistoryTableBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Soil Records Table -->
+                <div>
+                    <h3 class="text-base font-bold text-slate-800 mb-3 flex items-center space-x-2">
+                        <span>🧪</span>
+                        <span>Soil Advisory Records</span>
+                    </h3>
+                    <div class="overflow-x-auto border border-slate-200 rounded-2xl">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-50 text-slate-500 text-xs uppercase border-b border-slate-200">
+                                <tr>
+                                    <th class="py-3 px-4" data-i18n="col_date">Date & Time</th>
+                                    <th class="py-3 px-4" data-i18n="col_crop">Crop</th>
+                                    <th class="py-3 px-4">NPK Values</th>
+                                    <th class="py-3 px-4">pH</th>
+                                    <th class="py-3 px-4 text-right" data-i18n="col_action">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="soilHistoryTableBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- =========================================================================
+         AI SETTINGS MODAL
+    ========================================================================== -->
+    <div id="apiSettingsModal" class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center space-x-2">
+                    <span class="text-xl">⚙️</span>
+                    <h3 class="text-lg font-bold text-slate-800" data-i18n="modal_api_title">AI Vision & Model Settings</h3>
+                </div>
+                <button id="btnCloseApiModal" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
+            </div>
+            <p class="text-xs text-slate-500 leading-relaxed" data-i18n="modal_api_desc">
+                Configure an optional Google Gemini API key to enable Gemini 2.5 Flash Vision for multi-modal leaf pathology and AI Chat. If left empty, CropCare AI automatically uses the high-precision Local Computer Vision and Agronomic ML Models offline.
+            </p>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1" data-i18n="modal_api_label">Google Gemini API Key (Optional)</label>
+                <input type="password" id="geminiApiKeyInput" placeholder="AIzaSy..." class="w-full p-3 rounded-xl border border-slate-300 font-mono text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+            </div>
+            <div class="flex items-center justify-between pt-3 border-t border-slate-100">
+                <button id="btnClearApiKey" class="text-xs text-rose-600 hover:text-rose-800 font-semibold" data-i18n="modal_api_clear">
+                    Use Local Offline Models
+                </button>
+                <button id="btnSaveApiKey" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-md transition" data-i18n="modal_api_save">
+                    Save Settings
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         FOOTER
+    ========================================================================== -->
+    <footer class="bg-white border-t border-slate-200 py-6 mt-12 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4">
+            <p class="font-semibold text-slate-700">CropCare AI &copy; 2026 - Production AI & Expert System for Smart Agriculture</p>
+            <p class="mt-1 text-slate-400">Powered by Computer Vision, Machine Learning, Python Flask & SQLite.</p>
+        </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div id="toastNotification" class="hidden fixed bottom-5 right-5 z-50 px-4 py-3 rounded-2xl shadow-xl flex items-center space-x-2.5 transition-all text-sm font-semibold">
+        <span id="toastIcon">ℹ️</span>
+        <span id="toastMessage">Notification</span>
+    </div>
+
+    <!-- Application JavaScript -->
+    <script src="/static/js/i18n.js?v={{ app_version }}"></script>
+    <script src="/static/js/app.js?v={{ app_version }}"></script>
+</body>
+</html>

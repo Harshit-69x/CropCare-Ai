@@ -1,0 +1,128 @@
+/* CropCare AI - Custom Application Stylesheet */
+
+:root {
+    --primary-color: #059669;
+    --primary-hover: #047857;
+    --primary-light: #ecfdf5;
+    --primary-dark: #064e3b;
+    --accent-gold: #f59e0b;
+    --danger-red: #ef4444;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: #f8fafc;
+    color: #1e293b;
+    scroll-behavior: smooth;
+}
+
+/* Glassmorphism effects */
+.glass-header {
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.card-hover {
+    transition: all 0.25s ease-in-out;
+}
+.card-hover:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 24px -10px rgba(16, 185, 129, 0.15);
+}
+
+/* Active Nav Link */
+.nav-tab.active {
+    background-color: #ecfdf5;
+    color: #047857;
+    font-weight: 600;
+    border-color: #10b981;
+}
+
+/* Symptom Chip Styling */
+.symptom-chip {
+    transition: all 0.2s ease;
+    cursor: pointer;
+    user-select: none;
+}
+.symptom-chip:hover {
+    border-color: #10b981;
+    background-color: #f0fdf4;
+}
+.symptom-chip.selected {
+    background-color: #059669;
+    color: #ffffff;
+    border-color: #047857;
+    box-shadow: 0 2px 6px rgba(5, 150, 105, 0.3);
+}
+
+/* Dropzone */
+.dropzone {
+    border: 2px dashed #cbd5e1;
+    transition: all 0.2s ease;
+}
+.dropzone:hover, .dropzone.dragover {
+    border-color: #10b981;
+    background-color: #f0fdf4;
+}
+
+/* pH Meter Gauge */
+.ph-gauge-bar {
+    height: 18px;
+    border-radius: 9px;
+    background: linear-gradient(to right, 
+        #dc2626 0%,    /* strongly acidic */
+        #ea580c 20%,   /* acidic */
+        #eab308 35%,   /* slightly acidic */
+        #22c55e 50%,   /* optimal neutral */
+        #06b6d4 65%,   /* slightly alkaline */
+        #3b82f6 80%,   /* alkaline */
+        #7c3aed 100%   /* strongly alkaline */
+    );
+    position: relative;
+}
+.ph-indicator-pin {
+    position: absolute;
+    top: -5px;
+    width: 6px;
+    height: 28px;
+    background: #0f172a;
+    border-radius: 3px;
+    box-shadow: 0 0 6px rgba(0,0,0,0.4);
+    transform: translateX(-50%);
+    transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Toast Notification */
+#toastNotification {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Chat bubble styling */
+.chat-bubble-user {
+    background-color: #059669;
+    color: white;
+    border-top-right-radius: 4px;
+}
+.chat-bubble-bot {
+    background-color: #f1f5f9;
+    color: #1e293b;
+    border-top-left-radius: 4px;
+}
+
+/* Print Styling */
+@media print {
+    nav, footer, .no-print, #langToggleBtn, .tab-nav-container {
+        display: none !important;
+    }
+    body {
+        background: white !important;
+        color: black !important;
+    }
+    .print-full {
+        width: 100% !important;
+        box-shadow: none !important;
+        border: none !important;
+    }
+}
