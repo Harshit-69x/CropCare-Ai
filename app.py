@@ -6,6 +6,7 @@ Soil & Irrigation Advisories, SQLite Database, and Bilingual REST APIs.
 
 import os
 import uuid
+from typing import Any, Dict, List, Optional
 from flask import Flask, render_template, request, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
 from PIL import Image
